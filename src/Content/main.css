@@ -1,0 +1,7 @@
+.process-view {
+    display: flex;
+}
+
+.process-view > * {
+    width: 50%;
+}
