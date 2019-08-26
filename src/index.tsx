@@ -10,19 +10,19 @@ import SearchingView from "./components/Search/SearchingView";
 
 document.addEventListener("DOMContentLoaded", () =>{
     const sortingMethods = {
-        'MergeSort': new MergeSort(),
-        'QuickSort': new QuickSort()
+        MergeSort: new MergeSort(),
+        QuickSort: new QuickSort()
     };
 
     const searchingMethods = {
-        'BinarySearcher': new BinarySearcher(),
-        'LinearSearcher': new LinearSearcher()
-    }
+        BinarySearcher: new BinarySearcher(),
+        LinearSearcher: new LinearSearcher()
+    };
 
     ReactDOM.render(
         <div className="process-view">
-            <SortingView Sorters={sortingMethods}/>
-            <SearchingView Searchers={searchingMethods}/>
+            <SortingView sorters={sortingMethods}/>
+            <SearchingView searchers={searchingMethods}/>
         </div>,
         document.getElementsByTagName("body")[0]
     );

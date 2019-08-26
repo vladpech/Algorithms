@@ -1,11 +1,9 @@
 import InputsList from '../InputsList';
 import ISorter from "../../services/Sorting/ISorter";
 import * as React from "react";
-import {ReactElement} from "react";
 
 type SortedListSettings = {
-    children: ReactElement<InputsList>;
-    Sorter: ISorter;
+    sorter: ISorter;
 }
 
 type SortResult =  {
@@ -17,35 +15,33 @@ export default class SortingInputsList extends React.Component<SortedListSetting
     constructor(props: SortedListSettings) {
         super(props);
         this.state = { values: [] };
-        this.onChangeValues = this.onChangeValues.bind(this);
     }
 
-    componentWillReceiveProps(nextProps: SortedListSettings) {
-        if (this.props.Sorter !== nextProps.Sorter) {
-            let newState = {... this.state};
-            newState.result = null;
-            this.setState(newState);
+    componentDidUpdate(prevProps: SortedListSettings) {
+        if (this.props.sorter !== prevProps.sorter) {
+            this.setState((prevState: SortResult) => {
+                return { ...prevState, result: null}
+            });
         }
     }
 
-    sort() {
+    sort = () => {
         this.setState({
-            result: this.props.Sorter.sort(this.state.values)
+            result: this.props.sorter.sort(this.state.values)
         });
-    }
+    };
 
-    private onChangeValues(values: number[]) {
+    private onChangeValues = (values: number[]) => {
         this.setState({
             values: values
         });
-    }
+    };
 
     render() {
-        let newComponent = React.cloneElement(this.props.children, {onChangeValues: this.onChangeValues});
         return (
             <div>
-                {newComponent}
-                <button onClick={() => this.sort()}>Sort </button>
+                <InputsList minValue={1} maxValue={100} onChangeValues={this.onChangeValues}/>
+                <button onClick={this.sort}>Sort </button>
                 {this.state.result && "Result " + this.state.result.join(",")}
             </div>
         );

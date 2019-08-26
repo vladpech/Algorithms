@@ -1,11 +1,9 @@
 import * as React from "react";
 import InputsList from "../InputsList";
-import {ReactElement} from "react";
 import ISearcher from "../../services/Searching/ISearcher";
 
 type SearchListSettings = {
-    children: ReactElement<InputsList>;
-    Searcher: ISearcher;
+    searcher: ISearcher;
 }
 
 type SearchResult =  {
@@ -18,47 +16,46 @@ export default class SearchingInputsList extends React.Component<SearchListSetti
     constructor(props: SearchListSettings) {
         super(props);
         this.state = { values: [] };
-        this.onChangeValues = this.onChangeValues.bind(this);
-        this.onChangeElementToFind = this.onChangeElementToFind.bind(this);
     }
 
-    componentWillReceiveProps(nextProps: SearchListSettings) {
-        if (this.props.Searcher !== nextProps.Searcher) {
-            let newState = {... this.state};
-            newState.foundIndex = null;
-            this.setState(newState);
+    componentDidUpdate(prevProps: SearchListSettings) {
+        if (this.props.searcher !== prevProps.searcher) {
+            this.setState((previousState: SearchResult) => {
+                return {...previousState, foundIndex: null} as SearchResult
+            });
         }
     }
 
-    find() {
+    find = () => {
         if (!this.state.elementToFind) {
             return;
         }
 
-        this.setState({
-            foundIndex: this.props.Searcher.search(this.state.values, this.state.elementToFind)
+        this.setState((previousState: SearchResult, currentProps: SearchListSettings) => {
+            return {
+                foundIndex: currentProps.searcher.search(previousState.values, previousState.elementToFind)
+            }
         });
-    }
+    };
 
-    private onChangeElementToFind(e:any) {
+    private onChangeElementToFind = (e:any) => {
         this.setState({
-            elementToFind: e.target.value
+            elementToFind: parseInt(e.target.value)
         });
-    }
+    };
 
-    private onChangeValues(values: number[]) {
+    private onChangeValues = (values: number[]) => {
         this.setState({
             values: values
         });
-    }
+    };
 
     render() {
-        let newComponent = React.cloneElement(this.props.children, {onChangeValues: this.onChangeValues});
         return (
             <div>
-                {newComponent}
+                <InputsList minValue={1} maxValue={100} onChangeValues={this.onChangeValues}/>
                 <input value={this.state.elementToFind} onChange={this.onChangeElementToFind}/>
-                <button onClick={() => this.find()}>Find: </button>
+                <button onClick={this.find}>Find: </button>
                 {this.state.foundIndex ? `Find result, row - ${this.state.foundIndex + 1}` : 'Not found'}
             </div>
         );

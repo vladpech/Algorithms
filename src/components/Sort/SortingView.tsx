@@ -1,10 +1,9 @@
 import * as React from "react";
 import ISorter from "../../services/Sorting/ISorter";
-import InputsList from "../InputsList";
 import SortingInputsList from "./SortingInputsList";
 
 type SortingProps = {
-    Sorters: Sorters
+    sorters: Sorters
 }
 
 type Sorters = {
@@ -12,49 +11,46 @@ type Sorters = {
 }
 
 type SortingState = {
-    Sorter: ISorter;
+    sorter: ISorter;
 }
 
 export default class SortingView extends React.Component<SortingProps, SortingState> {
     constructor(props: any) {
         super(props);
-        let sorterKeys = Object.keys(this.props.Sorters);
-        this.state = { Sorter: this.props.Sorters[sorterKeys[0]] };
-
-        this.sortMethodChanged = this.sortMethodChanged.bind(this);
+        let sorterKeys = Object.keys(this.props.sorters);
+        this.state = { sorter: this.props.sorters[sorterKeys[0]] };
     }
 
     static getDerivedStateFromProps(nextProps: SortingProps, prevState: SortingState): SortingState | null {
-        if (Object.values(nextProps.Sorters).indexOf(prevState.Sorter) == -1) {
-            let sorterKeys = Object.keys(nextProps.Sorters);
+        if (Object.values(nextProps.sorters).indexOf(prevState.sorter) == -1) {
+            let sorterKeys = Object.keys(nextProps.sorters);
             return {
-                Sorter: nextProps.Sorters[sorterKeys[0]]
+                sorter: nextProps.sorters[sorterKeys[0]]
             }
         }
 
         return null;
     }
 
-    private sortMethodChanged(e: any) {
+    private sortMethodChanged = (e: any) => {
         this.setState({
-            Sorter: this.props.Sorters[e.target.value]
+            sorter: this.props.sorters[e.target.value]
         });
-    }
+    };
 
     render() {
         return (
             <div>
                 <select onChange={this.sortMethodChanged}>
-                    {Object.keys(this.props.Sorters).map((indexValue: string) =>
+                    {Object.keys(this.props.sorters).map((indexValue: string) =>
                         <option
                             key={indexValue}
-                            selected={this.props.Sorters[indexValue] === this.state.Sorter}
+                            selected={this.props.sorters[indexValue] === this.state.sorter}
                             value={indexValue}>
                             {indexValue}
                             </option>)}
                 </select>
-                <SortingInputsList Sorter={this.state.Sorter}>
-                    <InputsList minValue={1} maxValue={100} />
+                <SortingInputsList sorter={this.state.sorter}>
                 </SortingInputsList>
             </div>
         );

@@ -20,31 +20,34 @@ export default class InputsList extends React.Component<InputSettings, InputValu
         this.state = { values: this.props.values || [] };
     }
 
-    addInput() {
-        let newValues = this.state.values.concat([this.getRandomValue()]);
-        this.setState({ values: newValues });
-        this.applyOnChangeValues(newValues);
-    }
+    private addInput = () => {
+        this.setState((prevState: InputValues) => {
+            let newState = {...prevState};
+            newState.values.push(this.getRandomValue());
+            return newState;
+        }, () => this.applyOnChangeValues(this.state.values));
+    };
 
-    private getRandomValue(): number {
+    private getRandomValue = (): number => {
         let rand = this.props.minValue + Math.random() * (this.props.maxValue + 1 - this.props.minValue);
         return Math.floor(rand);
-    }
+    };
 
-    private changeValueHandler(index: number) {
+    private changeValueHandler = (index: number) => {
         return (value: number) => {
-            let newArray = this.state.values.slice();
-            newArray[index] = value;
-            this.setState({ values: newArray });
-            this.applyOnChangeValues(newArray);
+            this.setState((prevState: InputValues) => {
+                let newState = {...prevState};
+                newState.values[index] = value;
+                return newState;
+            }, () => this.applyOnChangeValues(this.state.values));
         }
-    }
+    };
 
-    private applyOnChangeValues(values: number[]) {
+    private applyOnChangeValues = (values: number[]) => {
         if (this.props.onChangeValues) {
             this.props.onChangeValues(values);
         }
-    }
+    };
 
     render() {
         return (
@@ -52,7 +55,7 @@ export default class InputsList extends React.Component<InputSettings, InputValu
                 <ul>
                     {this.state.values.map((value, i) => <li key={i}> <Input value={value} changeValueHandler={this.changeValueHandler(i)}/> </li>)}
                 </ul>
-                <button onClick={() => this.addInput()}>Add input</button>
+                <button onClick={this.addInput}>Add input</button>
             </div>
         )
     }

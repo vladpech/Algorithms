@@ -4,7 +4,7 @@ const CopyPlugin = require('copy-webpack-plugin');
 const distDirectory = "/dist";
 
 module.exports = {
-    "mode": "development",
+    mode: "development",
     entry: "./src/index.tsx",
     output: {
         filename: "bundle.js",
